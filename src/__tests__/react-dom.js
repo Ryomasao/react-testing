@@ -21,23 +21,21 @@ test('Basic javascript', () => {
 })
 
 test('render SimpleComponent', () => {
-  const {getByLabelText, getByTestId, getByText} = render(<SimpleComponent />)
-  const input = getByLabelText(/age/i)
-  const button = getByText('push')
-
-  fireEvent(
-    button,
-    new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-    }),
+  const {getByLabelText, getByTestId, queryByTestId, rerender} = render(
+    <SimpleComponent />,
   )
+  const input = getByLabelText(/age/i)
 
   fireEvent.change(input, {
     target: {value: 11},
   })
 
   expect(input).toHaveAttribute('type', 'number')
-
   expect(getByTestId('error-message')).toBeInTheDocument()
+  // プロパティを変更して再描画
+  rerender(<SimpleComponent max={11} />)
+  // エラーメッセージが表示されなこと
+  // 対象のエレメントが存在しないことを確認する際は、queryByを使う。
+  // getByは、見つからない場合にエラーをthrowするため
+  expect(queryByTestId('error-message')).toBeNull()
 })

@@ -1,18 +1,19 @@
 import React from 'react'
 
 class SimpleComponent extends React.Component {
-  state = {age: 0, touched: false, clicled: false}
+  // おお、こういう書き方ができるんだ
+  static defaultProps = {max: 10}
+
+  state = {age: 0, touched: false}
 
   handleChage = e => {
     this.setState({age: e.target.value, touched: true})
   }
 
-  handleButtonClick = () => {
-    this.setState({clicled: true})
-  }
-
   render() {
-    const isValid = !this.state.touched || this.state.age <= 10
+    // validationの値をpropsから設定する
+    const {max} = this.props
+    const isValid = !this.state.touched || this.state.age <= max
 
     return (
       <div>
@@ -24,9 +25,7 @@ class SimpleComponent extends React.Component {
           value={this.state.age}
           onChange={this.handleChage}
         />
-        <button onClick={this.handleButtonClick}>push</button>
         {isValid ? null : <div data-testid="error-message">Error!!!!</div>}
-        {this.state.clicled ? <div>yes</div> : null}
       </div>
     )
   }
