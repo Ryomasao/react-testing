@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --verbose=false",
     "lint": "kcd-scripts lint",
     "precommit": "kcd-scripts precommit",
     "validate": "kcd-scripts validate",
