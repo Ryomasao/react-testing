@@ -1,3 +1,4 @@
+import 'jest-dom/extend-expect'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SimpleComponent from '../SimpleComponent'
@@ -21,6 +22,6 @@ test('Basic javascript', () => {
 test('render SimpleComponent', () => {
   const div = document.createElement('div')
   ReactDOM.render(<SimpleComponent />, div)
-  expect(div.querySelector('input').type).toBe('number')
-  expect(div.querySelector('label').textContent).toBe('Hello')
+  expect(div.querySelector('input')).toHaveAttribute('type', 'number')
+  expect(div.querySelector('label')).toHaveTextContent('Hello')
 })

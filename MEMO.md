@@ -136,11 +136,31 @@ expect(div.querySelector('label').textContent).toBe('Hello')
 https://www.npmjs.com/package/jest-dom
 
 <br>
-#### jest-dom
-あんまよくわかってないのですが、  
-Element.typeとか、Element.textContentとか、毎回毎回書くのめんどくせえよ！ 　
-を解決するためのものみたいです。
 
-アサーションするときにチェック対象のオブジェクトから、チェックしたいものを簡単に抽出できる系のやつですかね。
+#### jest-dom
+
+あんまよくわかってないのですが、  
+Element.type とか、Element.textContent で確認したい要素をよってきて、toBe とがで毎回比較すんのめんどくせえよ！
+だったりを解決するためのものみたい？
 
 さっそくつかってみます。
+
+<b>simple-test.js</b>
+'''javascript
+import 'jest-dom/extend-expect'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import SimpleComponent from '../SimpleComponent'
+
+test('render SimpleComponent', () => {
+const div = document.createElement('div')
+ReactDOM.render(<SimpleComponent />, div)
+// 置き換えた
+expect(div.querySelector('input')).toHaveAttribute('type', 'number')
+expect(div.querySelector('label')).toHaveTextContent('Hello')
+})
+'''
+
+<br>
+
+チェック内容はさきほどと同じですが、`toHaveAttribute`など、なにをチェックしているのかわかりやすいですね。
