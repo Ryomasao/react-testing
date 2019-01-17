@@ -1,8 +1,10 @@
 import 'jest-dom/extend-expect'
+import 'react-testing-library/cleanup-after-each'
 import React from 'react'
-import ReactDOM from 'react-dom'
-import {getQueriesForElement} from 'dom-testing-library'
+import {render} from 'react-testing-library'
 import SimpleComponent from '../SimpleComponent'
+
+//afterEach(cleanup)
 
 test('Basic javascript', () => {
   const div = document.createElement('div')
@@ -21,14 +23,14 @@ test('Basic javascript', () => {
 })
 
 test('render SimpleComponent', () => {
-  const div = document.createElement('div')
-  ReactDOM.render(<SimpleComponent />, div)
-
-  // dom-testing-libraryのクエリを使えるようにする
-  const {getByLabelText} = getQueriesForElement(div)
-
+  //react-testing-libraryを使うとこんな感じにできる
+  const {getByLabelText, debug} = render(<SimpleComponent />)
   // Helloという文字列をもつラベルに紐づいたコントロールを取得
-  const input = getByLabelText('Hello')
-
+  const input = getByLabelText(/hello/i)
+  debug(input)
   expect(input).toHaveAttribute('type', 'number')
+})
+
+test('other test', () => {
+  console.log('on other test', document.documentElement.outerHTML)
 })

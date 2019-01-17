@@ -68,40 +68,41 @@ test('Basic javascript', () => {
 さきほどの createElement でつくったもの似たようなものをレンダリングするだけのもの。
 
 <b>SimpleComponent.js</b>
-'''javascript
+
+```javascript
 import React from 'react'
 
 class SimpleComponent extends React.Component {
-render() {
-return (
-<div>
-<label htmlFor="my-number">Hello</label>
-<input id="my-number" type="number" name="my-number"/>
-</div>
-)
-}
+  render() {
+    return (
+      <div>
+        <label htmlFor="my-number">Hello</label>
+        <input id="my-number" type="number" name="my-number" />
+      </div>
+    )
+  }
 }
 
 export default SimpleComponent
-
-'''
+```
 
 <br>
 
 そしたら、テスト側にコンポーネントと React を import して、以下のように ReacDOM.render をしてみる。
 
 <b>simple-test.js</b>
-'''javascript
+
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SimpleComponent from '../SimpleComponent'
 
 test('render SimpleComponent', () => {
-const div = document.createElement('div')
-ReactDOM.render(<SimpleComponent />, div)
-console.log(div.outerHTML)
+  const div = document.createElement('div')
+  ReactDOM.render(<SimpleComponent />, div)
+  console.log(div.outerHTML)
 })
-'''
+```
 
 <br>
 
@@ -120,18 +121,19 @@ console.log(div.outerHTML)
 さきほどと同じように、アサーションをいれてみも、うまくいくことがわかる。
 
 <b>simple-test.js</b>
-'''javascript
+
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SimpleComponent from '../SimpleComponent'
 
 test('render SimpleComponent', () => {
-const div = document.createElement('div')
-ReactDOM.render(<SimpleComponent />, div)
-expect(div.querySelector('input').type).toBe('number')
-expect(div.querySelector('label').textContent).toBe('Hello')
+  const div = document.createElement('div')
+  ReactDOM.render(<SimpleComponent />, div)
+  expect(div.querySelector('input').type).toBe('number')
+  expect(div.querySelector('label').textContent).toBe('Hello')
 })
-'''
+```
 
 <br>
 
@@ -148,20 +150,21 @@ Element.type とか、Element.textContent で確認したい要素をよって�
 さっそくつかってみます。
 
 <b>simple-test.js</b>
-'''javascript
+
+```javascript
 import 'jest-dom/extend-expect'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SimpleComponent from '../SimpleComponent'
 
 test('render SimpleComponent', () => {
-const div = document.createElement('div')
-ReactDOM.render(<SimpleComponent />, div)
-// 置き換えた
-expect(div.querySelector('input')).toHaveAttribute('type', 'number')
-expect(div.querySelector('label')).toHaveTextContent('Hello')
+  const div = document.createElement('div')
+  ReactDOM.render(<SimpleComponent />, div)
+  // 置き換えた
+  expect(div.querySelector('input')).toHaveAttribute('type', 'number')
+  expect(div.querySelector('label')).toHaveTextContent('Hello')
 })
-'''
+```
 
 <br>
 
@@ -184,27 +187,32 @@ https://github.com/kentcdodds/dom-testing-library/blob/7cb84a9068fd04d17d89edb89
 以下が置き換えた例。  
 
 <b>simple-test.js</b>
-'''javascript
+
+```javascript
 import 'jest-dom/extend-expect'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {getQueriesForElement} from 'dom-testing-library'
 import SimpleComponent from '../SimpleComponent'
 
 test('render SimpleComponent', () => {
-const div = document.createElement('div')
-ReactDOM.render(<SimpleComponent />, div)
+  const div = document.createElement('div')
+  ReactDOM.render(<SimpleComponent />, div)
 
-// dom-testing-library のクエリを使えるようにする
-const { getByLabelText } = getQueriesForElement(div)
+  // dom-testing-library のクエリを使えるようにする
+  const {getByLabelText} = getQueriesForElement(div)
 
-// Hello という文字列をもつラベルに紐づいたコントロールを取得
-const input = getByLabelText('Hello')
+  // Hello という文字列をもつラベルに紐づいたコントロールを取得
+  const input = getByLabelText('Hello')
 
-expect(input).toHaveAttribute('type', 'number')
+  expect(input).toHaveAttribute('type', 'number')
+
+  // このテストは、もういらない。input を取得できていることで担保できる。
+  //expect(div.querySelector('label')).toHaveTextContent('Hello')
 })
-'''
+```
 
 システム側の観点で、class や id で対象の Element をとってくるのではなく、ユーザーに近い形(hogehoge を入力するようの
 フィールドを取得するみたいな)で、対象を取得できる。
 
-以降は、jest-dom と react-testing-library の使用を前提として、いろいろ書いていく。
+以降は、jest-dom と dom-testing-library の使用を前提として、いろいろ書いていく。

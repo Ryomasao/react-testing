@@ -5,7 +5,7 @@ class SimpleComponent extends React.Component {
     return (
       <div>
         <label htmlFor="my-number">Hello</label>
-        <input id="my-number" type="number" name="my-number" />
+        <input id="my-number" type="number" name="my-number" value="0" />
       </div>
     )
   }
