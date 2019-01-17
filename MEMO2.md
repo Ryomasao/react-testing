@@ -344,6 +344,9 @@ test('render SimpleComponent', () => {
       cancelable: true,
     }),
   )
+
+  //もしくはもっと単純に
+  fireEvent.click(button)
 })
 ```
 
@@ -412,3 +415,11 @@ test('render SimpleComponent', () => {
   expect(queryByTestId('error-message')).toBeNull()
 })
 ```
+
+## コンポーネントが unmount された時のテスト
+
+jest の mock の理解度は低いので、とりあえず飛ばす。
+
+## Mock
+
+CSSTarnsition のように、ボタン押して x 秒後に表示されるとか

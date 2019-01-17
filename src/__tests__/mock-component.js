@@ -3,9 +3,10 @@ import 'jest-dom/extend-expect'
 import 'react-testing-library/cleanup-after-each'
 
 // 0⃣ 🐨 you'll need these:
-// import React from 'react'
-// import {render, fireEvent} from 'react-testing-library'
-// import {HiddenMessage} from '../hidden-message'
+import React from 'react'
+import {render, fireEvent} from 'react-testing-library'
+import {HiddenMessage} from '../hidden-message'
+import {debug} from 'util'
 
 // Our component uses a react animation library called react-transition-group.
 // By its nature, this library does some interesting things to keep an element
@@ -18,11 +19,23 @@ import 'react-testing-library/cleanup-after-each'
 // `CSSTransition` component from the react-transition-group module. So in
 // our mock module factory function that's all we need to return
 // 7⃣ 🐨 use jest.mock to mock out the react-transition-group component
-// 💯 jest.mock('react-transition-group', () => { /* return the mock object */ })
+jest.mock('react-transition-group', () => {
+  return {
+    CSSTransition: props => (props.in ? props.children : null),
+  }
+})
 // 📖 https://jestjs.io/docs/en/jest-object#jestmockmodulename-factory-options
 
 test('shows hidden message when toggle is clicked', () => {
-  // 1⃣ 🐨 render the HiddenMessage component with any message you want
+  const {getByText, queryByText} = render(<HiddenMessage>secret</HiddenMessage>)
+  const toggleButton = getByText(/toggle/i)
+  debug(toggleButton)
+  expect(queryByText('secret')).not.toBeInTheDocument()
+  fireEvent.click(toggleButton)
+  expect(queryByText('secret')).toBeInTheDocument()
+  fireEvent.click(toggleButton)
+  expect(queryByText('secret')).not.toBeInTheDocument()
+
   //
   // 2⃣ 🐨 get the toggle button
   // 💯 (use getByText)
