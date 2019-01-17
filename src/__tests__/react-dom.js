@@ -1,6 +1,7 @@
 import 'jest-dom/extend-expect'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {getQueriesForElement} from 'dom-testing-library'
 import SimpleComponent from '../SimpleComponent'
 
 test('Basic javascript', () => {
@@ -22,6 +23,12 @@ test('Basic javascript', () => {
 test('render SimpleComponent', () => {
   const div = document.createElement('div')
   ReactDOM.render(<SimpleComponent />, div)
-  expect(div.querySelector('input')).toHaveAttribute('type', 'number')
-  expect(div.querySelector('label')).toHaveTextContent('Hello')
+
+  // dom-testing-libraryのクエリを使えるようにする
+  const {getByLabelText} = getQueriesForElement(div)
+
+  // Helloという文字列をもつラベルに紐づいたコントロールを取得
+  const input = getByLabelText('Hello')
+
+  expect(input).toHaveAttribute('type', 'number')
 })

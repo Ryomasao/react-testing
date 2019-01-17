@@ -1,3 +1,7 @@
+# Test React WorkShop を視聴
+
+https://www.youtube.com/watch?v=w6KCDFssHFA
+
 ### jest とは
 
 テストランナー、アサーション、モックの機能がまるっと入ったテストフレームワーク。
@@ -70,16 +74,16 @@ import React from 'react'
 class SimpleComponent extends React.Component {
 render() {
 return (
-
 <div>
-<label>Hello</label>
-<input type="number"/>
+<label htmlFor="my-number">Hello</label>
+<input id="my-number" type="number" name="my-number"/>
 </div>
 )
 }
 }
 
 export default SimpleComponent
+
 '''
 
 <br>
@@ -131,9 +135,7 @@ expect(div.querySelector('label').textContent).toBe('Hello')
 
 <br>
 
-おおーん、すげえ！となったとこで、便利なテストマッチャーを紹介するぜ！
-
-https://www.npmjs.com/package/jest-dom
+おおーん、すげえ！となったとこで、新たにテストを便利にするライブラリを使っていきます。
 
 <br>
 
@@ -164,3 +166,45 @@ expect(div.querySelector('label')).toHaveTextContent('Hello')
 <br>
 
 チェック内容はさきほどと同じですが、`toHaveAttribute`など、なにをチェックしているのかわかりやすいですね。
+
+<br>
+
+#### dom-testing-library
+
+https://github.com/kentcdodds/dom-testing-library/blob/7cb84a9068fd04d17d89edb8988fcc181a40becf/README.md#within-and-getqueriesforelement-apis
+
+確認したい Element を取得する際に、`div.querySelector`ではなく、getByText とか独自のメソッド(クエリ)で Element を取得できるようにしてくれるもの。
+
+コンセプトは、ユーザーが実際の画面をみてるような観点でテストをするぜ！みたいなことなのかな。
+このへんは、フロントエンドのテストをどう考えるかが、反映されてくるみたい。
+ユーザーが実際に使う画面はいろんなコンポーネントが相互に動いてる世界だから、UT というより IT っぽいテストコードになる。
+
+<br>
+
+以下が置き換えた例。  
+
+<b>simple-test.js</b>
+'''javascript
+import 'jest-dom/extend-expect'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import SimpleComponent from '../SimpleComponent'
+
+test('render SimpleComponent', () => {
+const div = document.createElement('div')
+ReactDOM.render(<SimpleComponent />, div)
+
+// dom-testing-library のクエリを使えるようにする
+const { getByLabelText } = getQueriesForElement(div)
+
+// Hello という文字列をもつラベルに紐づいたコントロールを取得
+const input = getByLabelText('Hello')
+
+expect(input).toHaveAttribute('type', 'number')
+})
+'''
+
+システム側の観点で、class や id で対象の Element をとってくるのではなく、ユーザーに近い形(hogehoge を入力するようの
+フィールドを取得するみたいな)で、対象を取得できる。
+
+以降は、jest-dom と react-testing-library の使用を前提として、いろいろ書いていく。

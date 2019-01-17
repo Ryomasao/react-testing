@@ -4,8 +4,8 @@ class SimpleComponent extends React.Component {
   render() {
     return (
       <div>
-        <label>Hello</label>
-        <input type="number" />
+        <label htmlFor="my-number">Hello</label>
+        <input id="my-number" type="number" name="my-number" />
       </div>
     )
   }
