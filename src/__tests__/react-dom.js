@@ -1,10 +1,8 @@
 import 'jest-dom/extend-expect'
 import 'react-testing-library/cleanup-after-each'
 import React from 'react'
-import {render} from 'react-testing-library'
+import {render, fireEvent} from 'react-testing-library'
 import SimpleComponent from '../SimpleComponent'
-
-//afterEach(cleanup)
 
 test('Basic javascript', () => {
   const div = document.createElement('div')
@@ -23,14 +21,23 @@ test('Basic javascript', () => {
 })
 
 test('render SimpleComponent', () => {
-  //react-testing-libraryを使うとこんな感じにできる
-  const {getByLabelText, debug} = render(<SimpleComponent />)
-  // Helloという文字列をもつラベルに紐づいたコントロールを取得
-  const input = getByLabelText(/hello/i)
-  debug(input)
-  expect(input).toHaveAttribute('type', 'number')
-})
+  const {getByLabelText, getByTestId, getByText} = render(<SimpleComponent />)
+  const input = getByLabelText(/age/i)
+  const button = getByText('push')
 
-test('other test', () => {
-  console.log('on other test', document.documentElement.outerHTML)
+  fireEvent(
+    button,
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+    }),
+  )
+
+  fireEvent.change(input, {
+    target: {value: 11},
+  })
+
+  expect(input).toHaveAttribute('type', 'number')
+
+  expect(getByTestId('error-message')).toBeInTheDocument()
 })

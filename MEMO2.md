@@ -226,3 +226,125 @@ import SimpleComponent from '../SimpleComponent'
 ```
 
 ### debug
+
+デバッグ用
+
+<b>simple-test.js(抜粋)</b>
+
+```javascript
+test('render SimpleComponent', () => {
+  const {getByLabelText, debug} = render(<SimpleComponent />)
+  const input = getByLabelText(/hello/i)
+  debug(input)
+  expect(input).toHaveAttribute('type', 'number')
+})
+```
+
+こんな感じのものが出力される。
+
+```
+  <input
+    id="my-number"
+    name="my-number"
+    type="number"
+  />
+```
+
+<br/>
+## イベントのテスト
+イベントのテストに移る前に、`SimpleComponent`にinputのイベントを制御する処理を書く。
+また、inputの値が10を超える場合は、エラーメッセージが表示される。
+
+<b>機能を足した SimpleComponent</b>
+
+```javascript
+import React from 'react'
+
+class SimpleComponent extends React.Component {
+  state = {age: 0, touched: false}
+
+  handleChage = e => {
+    this.setState({age: e.target.value, touched: true})
+  }
+
+  render() {
+    const isValid = !this.state.touched || this.state.age <= 10
+
+    return (
+      <div>
+        <label htmlFor="age">Age</label>
+        <input
+          id="age"
+          type="number"
+          name="age"
+          value={this.state.age}
+          onChange={this.handleChage}
+        />
+        {isValid ? null : <div data-testid="error-message">Error!!!!</div>}
+      </div>
+    )
+  }
+}
+
+export default SimpleComponent
+```
+
+テストコードは至ってシンプル。
+
+<b>simple-test.js</b>
+
+```javascript
+import 'jest-dom/extend-expect'
+import 'react-testing-library/cleanup-after-each'
+import React from 'react'
+import {render, fireEvent} from 'react-testing-library'
+import SimpleComponent from '../SimpleComponent'
+
+test('render SimpleComponent', () => {
+  const {getByLabelText, getByTestId} = render(<SimpleComponent />)
+  const input = getByLabelText(/age/i)
+  const button = getByText('push')
+
+  // fireEventをつかってイベントを発火させる。発火させた際のtarget.valueを設定してるのかな
+  fireEvent.change(input, {
+    target: {value: 11},
+  })
+
+  expect(input).toHaveAttribute('type', 'number')
+  // エラーメッセージが表示されること
+  expect(getByTestId('error-message')).toBeInTheDocument()
+})
+```
+
+button をクリックしたときは以下のようにかける。
+
+<b>button を足した SimpleComponent(抜粋)</b>
+
+```javascript
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleButtonClick}>push</button>
+      </div>
+    )
+  }
+
+export default SimpleComponent
+```
+
+<b>simple-test.js(抜粋)</b>
+
+```javascript
+test('render SimpleComponent', () => {
+  const {getByText} = render(<SimpleComponent />)
+  const button = getByText('push')
+
+  fireEvent(
+    button,
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+    }),
+  )
+})
+```
